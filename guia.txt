@@ -1,0 +1,36 @@
+JsonElement
+	name!! == default
+	hasKey == true
+	
+	
+	
+	-Objects
+		isOuter:
+		[JsonElement]
+		
+		
+	-Array
+		[JsonElement]
+	 
+	-Int
+	
+	-String
+	
+	-Boolean
+	
+	-Null
+	
+	array.get("key")
+	
+
+
+	
+	
+sealed class JsonValue {
+    data class JsonObject(val properties: MutableMap<String, JsonValue>) : JsonValue()
+    data class JsonArray(val elements: MutableList<JsonValue>) : JsonValue()
+    data class JsonString(val value: String) : JsonValue()
+    data class JsonNumber(val value: Number) : JsonValue()
+    data class JsonBoolean(val value: Boolean) : JsonValue()
+    object JsonNull : JsonValue()
+}
