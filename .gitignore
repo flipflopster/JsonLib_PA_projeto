@@ -26,6 +26,7 @@ bin/
 /.nb-gradle/
 
 
-/.idea
+/.idea/
+/out/
 
 PA_projeto.iml
