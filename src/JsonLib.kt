@@ -24,20 +24,62 @@ interface JsonElement{
     }
 }
 
-class JsonObject (val map: MutableMap<String, JsonElement>) : JsonElement  {
+class JsonObject (val map: MutableMap<String, JsonElement> = mutableMapOf<String, JsonElement>()) : JsonElement  {
 
+    
     val getValues get() = map.values.toList()
 
     fun serializeToString() {
 
     }
 
+    init {
+
+    }
+
+    fun filter(predicate: (JsonElement) -> Boolean): JsonObject {
+        val newMap = mutableMapOf<String, JsonElement>()
+        map.forEach {
+            if (predicate(it.value)) {
+                newMap[it.key] = it.value
+            }
+
+        }
+        return JsonObject(newMap)
+    }
+
+
+
 
 }
 
-class JsonArray () : JsonElement {
+class JsonArray (val list: MutableList<JsonElement> = mutableListOf<JsonElement>()) : JsonElement {
 
-    val list: MutableList<JsonElement> =  mutableListOf<JsonElement>()
+    init {
+        if (list.isNotEmpty()) {
+            //TODO check se são todos do mesmo tipo usando accept()
+        }
+    }
+
+    fun filter(predicate: (JsonElement) -> Boolean): JsonArray {
+        val newList = mutableListOf<JsonElement>()
+        list.forEach {
+            if (predicate(it)) {
+                newList.add(it)
+            }
+
+        }
+        return JsonArray(newList)
+    }
+
+    fun map(transform: (JsonElement) -> JsonElement): JsonArray {
+
+        val newList = mutableListOf<JsonElement>()
+        list.forEach {
+            newList.add(transform(it))
+        }
+        return JsonArray(newList)
+    }
 
     fun add(element: JsonElement) {
         //TODO check se são todos do mesmo tipo
@@ -53,6 +95,8 @@ class JsonArray () : JsonElement {
         }
         return result.dropLast(2) + "]"
     }
+
+
 }
 
 class JsonNumber (val integer: Int) : JsonElement {
