@@ -33,14 +33,24 @@ class Tests {
 
     }
 
+
     @Test
     fun testJsonMap() {
 
-        val mappedArray = jsonArray.map { it.value.upperCase() }
-
+        val originalArray = JsonArray(mutableListOf(JsonString("string"), JsonString("ola")))
+        val mappedArray = originalArray.map {
+            if (it is JsonString)
+                JsonString(it.value.uppercase())
+            else it
         }
-
+        val teste = JsonArray(mutableListOf(JsonString("STRING"), JsonString("OLA")))
+        assertEquals(teste,mappedArray)
 
     }
+
+
+
+
+
 
 }
