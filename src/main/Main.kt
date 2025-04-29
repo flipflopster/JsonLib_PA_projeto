@@ -16,3 +16,30 @@ class Person(val name: String, var age: Int) {
     }
 }
 
+fun accept(visitor: (jsonElement) -> Unit) {
+    when (this) {
+
+        is JsonObject -> {
+            visitor(this)
+
+            map.forEach{
+                visitor(this)
+            }
+
+        }
+
+        else -> visitor(this)
+    }
+}
+
+fun accept(visitor: (Element) -> Unit) {
+    when (this) {
+        is FileElement -> visitor(this)
+        is DirectoryElement -> {
+            visitor(this)
+            getChildren.forEach{
+                it.accept(visitor)
+            }
+        }
+    }
+}

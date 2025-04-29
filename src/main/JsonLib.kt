@@ -13,13 +13,21 @@ interface JsonElement{
                 getValues.forEach{
                     it.accept(visitor)
                 }
+
+            }
+
+            is JsonObjectTupple -> {
+
             }
 
             is JsonArray -> {
-                //visitor(this) //TODO aplicar á própria lista
+
+                visitor(this) //TODO aplicar á própria lista
+
                 getList.forEach{
                     it.accept(visitor)
                 }
+
             }
 
             else -> visitor(this)
@@ -28,14 +36,21 @@ interface JsonElement{
     }
 }
 
+class JsonObjectTupple(val key: String, val value: JsonElement) : JsonElement
+
 data class JsonObject (val map: MutableMap<String, JsonElement> = mutableMapOf<String, JsonElement>()) : JsonElement {
 
 
     val getValues get() = map.values.toList()
 
     fun serializeToString() {
+        val result = ""
+        accept {
 
+        }
     }
+
+
 
     init {
 
@@ -77,6 +92,15 @@ data class JsonArray (val list: MutableList<JsonElement> = mutableListOf<JsonEle
         }
     }
 
+    fun checkSameTypeElements(): Boolean  {
+        val c = list.first()::class
+        var consecutive = 0
+
+
+
+
+    }
+
     fun filter(predicate: (JsonElement) -> Boolean): JsonArray {
         val newList = mutableListOf<JsonElement>()
         list.forEach {
@@ -106,9 +130,7 @@ data class JsonArray (val list: MutableList<JsonElement> = mutableListOf<JsonEle
 
     override fun toString(): String {
         var result : String = "["
-        list.forEach {
-            result += it.toString() + ", "
-        }
+
         return result.dropLast(2) + "]"
     }
 
@@ -116,9 +138,11 @@ data class JsonArray (val list: MutableList<JsonElement> = mutableListOf<JsonEle
 }
 
 data class JsonNumber (val integer: Int = 0) : JsonElement {
+
     override fun toString(): String {
         return integer.toString()
     }
+
 }
 
 data class JsonString(val string: String) : JsonElement {
