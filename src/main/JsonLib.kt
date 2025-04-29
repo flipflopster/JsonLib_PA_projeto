@@ -90,7 +90,7 @@ data class JsonArray (val list: MutableList<JsonElement> = mutableListOf<JsonEle
         val c = list.first()::class
         var isValid = true
         accept {
-            if (it in list && it::class!= c) {
+            if (it in list && it::class!= c) { //altamente wastefull mas funciona
                 isValid = false
             }
         }

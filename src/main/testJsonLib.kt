@@ -25,9 +25,24 @@ class Tests {
         )
     )
 
+    val exampleObject2 = JsonObject(
+        mutableMapOf(
+
+            "number" to JsonNumber(42)
+        )
+    )
+
     @Test(expected = IllegalArgumentException::class)
     fun testJsonArrayError() {
         val jsonArrayFalse = JsonArray(mutableListOf(jsonNumber,jsonString))
+
+    }
+
+    @Test
+    fun testJsonArrayObjects() {
+        val jsonArrayFalse2 = JsonArray(mutableListOf(exampleObject,exampleObject2))
+        val jsonArrayFalse3 = JsonArray(mutableListOf(exampleObject,exampleObject))
+        val jsonArrayFalse4 = JsonArray(mutableListOf(exampleObject,exampleObject2))
     }
 
     @Test(expected = IllegalArgumentException::class)
