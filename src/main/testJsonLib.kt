@@ -38,20 +38,28 @@ class Tests {
 
     }
 
+
     @Test
     fun testJsonMap() {
 
-        //val mappedArray = jsonArray.map { it.value.upperCase() }
+        val originalArray = JsonArray(mutableListOf(JsonString("string"), JsonString("ola")))
+        val mappedArray = originalArray.map {
+            if (it is JsonString)
+                JsonString(it.value.uppercase())
+            else it
+        }
+        val teste = JsonArray(mutableListOf(JsonString("STRING"), JsonString("OLA")))
+        assertEquals(teste,mappedArray)
 
     }
 
-    @Test
+
+ @Test
     fun testSerializeJsonToString() {
         val str = "{\"string\":\"Hello, World!\",\"number\":42,\"boolean\":true,\"array\":[\"item1\",\"item2\"],\"nestedObject\":{\"key1\":\"nestedValue\"}}"
         assertEquals(str, exampleObject.serializeToString())
     }
 
+
+
 }
-
-
-
