@@ -15,7 +15,7 @@ class Person(val name: String, var age: Int) {
         println("Person created with name: $name and age: $age")
     }
 }
-
+/*
 fun accept(visitor: (jsonElement) -> Unit) {
     when (this) {
 
@@ -43,3 +43,5 @@ fun accept(visitor: (Element) -> Unit) {
         }
     }
 }
+
+ */

@@ -81,25 +81,22 @@ data class JsonArray (val list: MutableList<JsonElement> = mutableListOf<JsonEle
             if (c == JsonNull::class) {
                 throw IllegalArgumentException("The array cannot contain null values")
             }
-
-            accept {
-
-                if (it::class!= c) {
-                    throw IllegalArgumentException("All elements in the array must be of the same type")
-                }
-
-            }
+            if(!checkSameTypeElements())
+                throw IllegalArgumentException("All elements in the array must be of the same type")
         }
     }
 
-    fun checkSameTypeElements(): Boolean  {
+    fun checkSameTypeElements(): Boolean  { // is this correct??
         val c = list.first()::class
-        var consecutive = 0
-
-
-
-
+        var isValid = true
+        accept {
+            if (it in list && it::class!= c) {
+                isValid = false
+            }
+        }
+        return isValid
     }
+
 
     fun filter(predicate: (JsonElement) -> Boolean): JsonArray {
         val newList = mutableListOf<JsonElement>()
@@ -124,6 +121,8 @@ data class JsonArray (val list: MutableList<JsonElement> = mutableListOf<JsonEle
     fun add(element: JsonElement) {
         //TODO check se são todos do mesmo tipo
         list.add(element)
+        if(!checkSameTypeElements())
+            throw IllegalArgumentException("The added element in the array must be of the same type as the array")
     }
 
     val getList: List<JsonElement> get() = list.toList()
@@ -167,6 +166,8 @@ enum class JsonBoolean : JsonElement {
 
 
 }
+
+
 
 object JsonNull : JsonElement {
     override fun toString(): String = "null"

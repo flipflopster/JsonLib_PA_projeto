@@ -25,9 +25,15 @@ class Tests {
         )
     )
 
-    @Test
-    fun testJsonArray() {
-        println("sus")
+    @Test(expected = IllegalArgumentException::class)
+    fun testJsonArrayError() {
+        val jsonArrayFalse = JsonArray(mutableListOf(jsonNumber,jsonString))
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun testJsonArrayErrorAdd() {
+        val jsonArrayFalse = JsonArray(mutableListOf(jsonNumber))
+        jsonArrayFalse.add(jsonString)
     }
 
     @Test
