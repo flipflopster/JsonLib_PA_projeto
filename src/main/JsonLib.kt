@@ -10,19 +10,20 @@ interface JsonElement{
 
             is JsonObject -> {
                 visitor(this)
-                getValues.forEach{
+                getList.forEach{
                     it.accept(visitor)
                 }
 
             }
 
             is JsonObjectTupple -> {
-
+                visitor(key)
+                visitor(value)
             }
 
             is JsonArray -> {
 
-                visitor(this) //TODO aplicar á própria lista
+                visitor(this)
 
                 getList.forEach{
                     it.accept(visitor)
@@ -34,14 +35,29 @@ interface JsonElement{
 
         }
     }
+
+    fun validateArraysDepth(): Boolean{
+        var valid: Boolean=true
+        accept {
+            if(it::class == JsonArray::class)
+                if(!(it as JsonArray).checkSameTypeElements()){
+                    valid = false
+                }
+        }
+        return valid
+    }
+
+
+
 }
 
-class JsonObjectTupple(val key: String, val value: JsonElement) : JsonElement
-
-data class JsonObject (val map: MutableMap<String, JsonElement> = mutableMapOf<String, JsonElement>()) : JsonElement {
+class JsonObjectTupple(val key: JsonString, val value: JsonElement) : JsonElement
 
 
-    val getValues get() = map.values.toList()
+data class JsonObject (val list: MutableList<JsonObjectTupple> = mutableListOf<JsonObjectTupple>()) : JsonElement {
+
+
+    val getList get() = list.toList()
 
     fun serializeToString() {
         val result = ""
@@ -50,22 +66,20 @@ data class JsonObject (val map: MutableMap<String, JsonElement> = mutableMapOf<S
         }
     }
 
-
-
     init {
 
     }
 
-    fun filter(predicate: (JsonElement) -> Boolean): JsonObject {
-        val newMap = mutableMapOf<String, JsonElement>()
-        map.forEach {
-            if (predicate(it.value)) {
-                newMap[it.key] = it.value
+    fun filter(predicate: (JsonObjectTupple) -> Boolean): JsonObject {
+        val newList = mutableListOf<JsonObjectTupple>()
+        list.forEach {
+            if (predicate(it)) {
+                newList.add(it)
             }
-
         }
-        return JsonObject(newMap)
+        return JsonObject(newList)
     }
+
 
 
 
@@ -86,16 +100,18 @@ data class JsonArray (val list: MutableList<JsonElement> = mutableListOf<JsonEle
         }
     }
 
-    fun checkSameTypeElements(): Boolean  { // is this correct??
+
+
+    fun checkSameTypeElements(): Boolean {
         val c = list.first()::class
-        var isValid = true
-        accept {
-            if (it in list && it::class!= c) { //altamente wastefull mas funciona
-                isValid = false
+        list.forEach{
+            if (it::class!= c) {
+                return false
             }
         }
-        return isValid
+        return true
     }
+
 
 
     fun filter(predicate: (JsonElement) -> Boolean): JsonArray {
