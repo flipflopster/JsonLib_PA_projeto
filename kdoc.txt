@@ -1,0 +1,32 @@
+    JsonElement
+
+validateArraysDepth()
+
+-Verifica se todos os JsonArray são válidos, tem o mesmo tipo
+-@return true se todos os JsonArray sao do mesmo tipo, false se não
+
+
+    JsonObject
+
+filter
+-Filtro que devolve um novo JsonObject com base no predicate dado nu outro JsonObject
+-@param predicate que indica quais são os elementos do JsonObject que devem de ser incluídos
+-@return JsonObject com os elementos escolhidos pelo filtro
+
+
+    JsonArray
+
+filter
+-Filtro que devolve um novo JsonArray com base no predicate dado nu outro JsonArray
+-@param predicate que indica quais são os elementos do JsonObject que devem de ser incluídos
+-@return JsonArray com os elementos escolhidos pelo filtro
+
+map
+-Aplica uma transformação em cada um dos elementos do JsonArray, originando um novo JsonArray
+-@param transform que vai ser aplicada aos elementos
+-@return JsonArray com os novos elementos transformados
+
+add
+-Adiciona um novo elemento ao JsonArray
+-@param elemento a ser adicionado
+

@@ -52,16 +52,23 @@ class Tests {
     }
 
     @Test
-    fun testJsonFilter() {
+    fun testJsonObjectFilter() {
 
         val filteredObject = exampleObject.filter { it::class == JsonString::class }
         assertEquals(JsonObject(mutableMapOf("string" to jsonString)), filteredObject)
 
     }
 
+    @Test
+    fun testJsonArrayFilter() {
+
+        val filteredArray = jsonArray.filter { it == JsonString("item1") }
+        assertEquals(JsonArray(mutableListOf(JsonString("item1"))), filteredArray)
+    }
+
 
     @Test
-    fun testJsonMap() {
+    fun testJsonArrayMap() {
 
         val originalArray = JsonArray(mutableListOf(JsonString("string"), JsonString("ola")))
         val mappedArray = originalArray.map {

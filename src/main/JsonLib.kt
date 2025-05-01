@@ -146,6 +146,10 @@ data class JsonArray (val list: MutableList<JsonElement> = mutableListOf<JsonEle
     override fun toString(): String {
         var result : String = "["
 
+        list.forEach{
+            result = result +  it.toString() + ", "
+        }
+
         return result.dropLast(2) + "]"
     }
 
