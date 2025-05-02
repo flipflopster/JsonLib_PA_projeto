@@ -10,25 +10,27 @@ class Tests {
     val jsonNumber = JsonNumber(42)
     val jsonBoolean = JsonBoolean.TRUE
     val jsonArray = JsonArray(mutableListOf(JsonString("item1"), JsonString("item2")))
-    val nestedJsonObject = JsonObject(mutableMapOf("key1" to JsonString("nestedValue")))
+    val nestedJsonObject = JsonObject(mutableListOf(JsonObjectTupple(JsonString("key1"), JsonString("nestedValue"))))
 
 
 
 
     val exampleObject = JsonObject(
-        mutableMapOf(
-            "string" to jsonString,
-            "number" to jsonNumber,
-            "boolean" to jsonBoolean,
-            "array" to jsonArray,
-            "nestedObject" to nestedJsonObject
+        mutableListOf(JsonObjectTupple(JsonString("string"), jsonString),
+                    JsonObjectTupple(JsonString("number"), jsonNumber),
+                    JsonObjectTupple(JsonString("boolean"), jsonBoolean),
+                    JsonObjectTupple(JsonString("array"), jsonArray),
+
+                    JsonObjectTupple(JsonString("nestedObject"), nestedJsonObject)
+
         )
+
     )
 
     val exampleObject2 = JsonObject(
-        mutableMapOf(
+        mutableListOf(
 
-            "number" to JsonNumber(42)
+            JsonObjectTupple(JsonString("number"), jsonNumber)
         )
     )
 
@@ -54,8 +56,9 @@ class Tests {
     @Test
     fun testJsonObjectFilter() {
 
-        val filteredObject = exampleObject.filter { it::class == JsonString::class }
-        assertEquals(JsonObject(mutableMapOf("string" to jsonString)), filteredObject)
+        val filteredObject = exampleObject.filter { it.value::class == JsonString::class }
+
+        assertEquals(JsonObject(mutableListOf(JsonObjectTupple(JsonString("string"), jsonString))), filteredObject)
 
     }
 
@@ -84,7 +87,7 @@ class Tests {
 
  @Test
     fun testSerializeJsonToString() {
-        val str = "{\"string\":\"Hello, World!\",\"number\":42,\"boolean\":true,\"array\":[\"item1\",\"item2\"],\"nestedObject\":{\"key1\":\"nestedValue\"}}"
+        val str = "{\"string\": \"Hello, World!\", \"number\": 42, \"boolean\": true, \"array\": [\"item1\", \"item2\"], \"nestedObject\": {\"key1\": \"nestedValue\"}}"
         assertEquals(str, exampleObject.serializeToString())
     }
 

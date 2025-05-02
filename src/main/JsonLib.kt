@@ -40,9 +40,19 @@ interface JsonElement{
         var valid: Boolean=true
         accept {
             if(it::class == JsonArray::class)
-                if(!(it as JsonArray).checkSameTypeElements()){
+                if(!(it as JsonArray).checkSameTypeElements())
                     valid = false
-                }
+
+        }
+        return valid
+    }
+
+    fun validateObjectsDepth(): Boolean{
+        var valid: Boolean=true
+        accept {
+            if(it::class == JsonObject::class)
+                if(!(it as JsonObject).checkValidKeys())
+                    valid = false
         }
         return valid
     }
@@ -51,7 +61,12 @@ interface JsonElement{
 
 }
 
-class JsonObjectTupple(val key: JsonString, val value: JsonElement) : JsonElement
+data class JsonObjectTupple(val key: JsonString, val value: JsonElement) : JsonElement {
+
+    override fun toString(): String {
+        return key.toString() + ": " + value.toString()
+    }
+}
 
 
 data class JsonObject (val list: MutableList<JsonObjectTupple> = mutableListOf<JsonObjectTupple>()) : JsonElement {
@@ -59,11 +74,16 @@ data class JsonObject (val list: MutableList<JsonObjectTupple> = mutableListOf<J
 
     val getList get() = list.toList()
 
-    fun serializeToString() {
-        val result = ""
-        accept {
+    fun serializeToString(): String {
+        return toString()
+    }
 
+    override fun toString(): String {
+        var result : String = "{"
+        list.forEach{
+            result = result +  it.toString() + ", "
         }
+        return result.dropLast(2) + "}"
     }
 
     init {
@@ -80,7 +100,32 @@ data class JsonObject (val list: MutableList<JsonObjectTupple> = mutableListOf<J
         return JsonObject(newList)
     }
 
+    fun checkValidKeys(): Boolean {
+        val keys: MutableList<JsonString> = mutableListOf()
 
+        val controlCharactersRegex = "[\\x00-\\x1F\\x7F-\\x9F]".toRegex()
+        val unescapedBackslashRegex = "\\\\[^\"]".toRegex()
+        val doubleQuoteRegex = "\"".toRegex()
+
+        list.forEach {
+
+            if( it.key in keys){
+                return false
+            }
+
+            keys.add(it.key)
+
+            val str = it.key.value
+            // Check for control characters
+            if (controlCharactersRegex.containsMatchIn(str) || unescapedBackslashRegex.containsMatchIn(str) || doubleQuoteRegex.containsMatchIn(str)) {
+                return false
+            }
+
+
+        }
+
+        return true
+    }
 
 
 
@@ -89,6 +134,7 @@ data class JsonObject (val list: MutableList<JsonObjectTupple> = mutableListOf<J
 data class JsonArray (val list: MutableList<JsonElement> = mutableListOf<JsonElement>()) : JsonElement {
 
     init {
+        /*
         if (list.isNotEmpty()) {
             val c = list.first()::class
 
@@ -98,6 +144,8 @@ data class JsonArray (val list: MutableList<JsonElement> = mutableListOf<JsonEle
             if(!checkSameTypeElements())
                 throw IllegalArgumentException("All elements in the array must be of the same type")
         }
+        */
+        print("")
     }
 
 
@@ -156,7 +204,10 @@ data class JsonArray (val list: MutableList<JsonElement> = mutableListOf<JsonEle
 
 }
 
-data class JsonNumber (val integer: Int = 0) : JsonElement {
+data class JsonNumber (private val integer: Int = 0) : JsonElement {
+
+
+    val value: Int get() = integer
 
     override fun toString(): String {
         return integer.toString()
@@ -164,7 +215,7 @@ data class JsonNumber (val integer: Int = 0) : JsonElement {
 
 }
 
-data class JsonString(val string: String) : JsonElement {
+data class JsonString(private val string: String) : JsonElement {
 
     val value: String get() = string
 
