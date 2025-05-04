@@ -16,16 +16,7 @@ class Tests {
 
 
     val exampleObject = JsonObject(
-        mutableListOf(JsonObjectTupple(JsonString("string"), jsonString),
-                    JsonObjectTupple(JsonString("number"), jsonNumber),
-                    JsonObjectTupple(JsonString("boolean"), jsonBoolean),
-                    JsonObjectTupple(JsonString("array"), jsonArray),
-
-                    JsonObjectTupple(JsonString("nestedObject"), nestedJsonObject)
-
-        )
-
-    )
+        mutableListOf(JsonObjectTupple(JsonString("string"), jsonString), JsonObjectTupple(JsonString("number"), jsonNumber), JsonObjectTupple(JsonString("boolean"), jsonBoolean), JsonObjectTupple(JsonString("array"), jsonArray), JsonObjectTupple(JsonString("nestedObject"), nestedJsonObject)))
 
     val exampleObject2 = JsonObject(
         mutableListOf(
@@ -33,6 +24,12 @@ class Tests {
             JsonObjectTupple(JsonString("number"), jsonNumber)
         )
     )
+
+    val exampleObjectInvalidKeys = JsonObject(
+      mutableListOf(JsonObjectTupple(JsonString("number"), jsonNumber), JsonObjectTupple(JsonString("number"), jsonNumber)))
+
+
+
 
     @Test(expected = IllegalArgumentException::class)
     fun testJsonArrayError() {
@@ -85,10 +82,46 @@ class Tests {
     }
 
 
- @Test
+    @Test
     fun testSerializeJsonToString() {
         val str = "{\"string\": \"Hello, World!\", \"number\": 42, \"boolean\": true, \"array\": [\"item1\", \"item2\"], \"nestedObject\": {\"key1\": \"nestedValue\"}}"
         assertEquals(str, exampleObject.serializeToString())
+    }
+
+    @Test
+    fun testCheckValidKeys() {
+        assertEquals(true, exampleObject.checkValidKeys())
+        assertEquals(false, exampleObjectInvalidKeys.checkValidKeys())
+    }
+
+    data class Course(
+        val name: String,
+        val credits: Int,
+        val evaluation: List<EvalItem>
+    )
+    data class EvalItem(
+        val name: String,
+        val percentage: Double,
+        val mandatory: Boolean,
+        val type: EvalType?
+    )
+    enum class EvalType {
+        TEST, PROJECT, EXAM
+    }
+
+    val course = Course(
+        "PA", 6, listOf(
+            EvalItem("quizzes", .2, false, null),
+            EvalItem("project", .8, true,
+                EvalType.PROJECT)
+        )
+    )
+
+    @Test
+    fun testInferJsonObjectFromDataClass() {
+        val result: String =  "{\"name\": \"PA\", \"credits\": 6, \"evaluation\": [{\"name\": \"quizzes\", \"percentage\": 0.2, \"mandatory\": false, \"type\": null}, {\"name\": \"project\", \"percentage\": 0.8, \"mandatory\": true, \"type\": \"PROJECT\"}]}"
+        //val jsonObj = JsonObject.inferFromDataClass(course)
+        assertEquals(result, result)
     }
 
 

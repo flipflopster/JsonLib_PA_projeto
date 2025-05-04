@@ -7,6 +7,8 @@ fun main() {
     println(person.age)  // Output: 30
     person.age = 31      // You can change the age because it's a var
     println(person.age)  // Output: 31
+    val result =  "{\"name\": \"PA\", \"credits\": 6, \"evaluation\": [{\"name\": \"quizzes\", \"percentage\": 0.2, \"mandatory\": false, \"type\": null}, {\"name\": \"project\", \"percentage\": 0.8, \"mandatory\": true, \"type\": \"PROJECT\"}]}"
+    println(result)
 }
 
 class Person(val name: String, var age: Int) {
