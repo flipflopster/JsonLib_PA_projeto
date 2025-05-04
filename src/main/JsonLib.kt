@@ -204,10 +204,10 @@ data class JsonArray (val list: MutableList<JsonElement> = mutableListOf<JsonEle
 
 }
 
-data class JsonNumber (private val integer: Int = 0) : JsonElement {
+data class JsonNumber (private val integer: Number = 0) : JsonElement {
 
 
-    val value: Int get() = integer
+    val value: Number get() = integer
 
     override fun toString(): String {
         return integer.toString()
@@ -243,3 +243,27 @@ enum class JsonBoolean : JsonElement {
 object JsonNull : JsonElement {
     override fun toString(): String = "null"
 }
+
+    fun toJsonElement(element: Any): JsonElement{
+        return when(element) {
+            is Int -> JsonNumber(element as Number)
+            is Double -> JsonNumber(element as Number)
+            is Boolean -> if (element) JsonBoolean.TRUE else JsonBoolean.FALSE
+            is String -> JsonString(element)
+            is List<*> -> toJsonElementList(element)
+            is Enum<*> -> JsonString(element.name)
+            null -> JsonNull
+            is Map<*,*> -> toJsonElementMap(element)
+        }
+        else
+            TODO()
+
+    }
+
+    fun toJsonElementList(lista: List<*>): JsonElement{
+        TODO()
+    }
+
+    fun toJsonElementMap(mapa: Map<*,*>): JsonElement{
+        TODO()
+    }
