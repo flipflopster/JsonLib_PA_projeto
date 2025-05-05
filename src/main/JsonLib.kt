@@ -260,14 +260,19 @@ object JsonNull : JsonElement {
     }
 
     fun toJsonElementList(lista: List<*>): JsonElement{
-        var listJsonElement = JsonArray()
+        val listJsonElement = JsonArray()
         lista.forEach{
             listJsonElement.add(toJsonElement(it))
         }
         return listJsonElement
     }
 
-    fun toJsonElementMap(mapa: Map<*,*>): JsonElement{
-        //JsonObject
-        TODO()
+    fun toJsonElementMap(mapa: Map<*,*>): JsonElement {
+        val jsonObject = mutableListOf<JsonObjectTupple>()
+        mapa.forEach{ k,v ->
+            if(k is String){
+                jsonObject.add(JsonObjectTupple(JsonString(k), toJsonElement(v)))
+            } else throw IllegalArgumentException("Key has to be String")
+        }
+        return JsonObject(jsonObject)
     }

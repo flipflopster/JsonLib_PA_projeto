@@ -8,7 +8,8 @@ fun main() {
     println(person.age)  // Output: 31
     val result =  "{\"name\": \"PA\", \"credits\": 6, \"evaluation\": [{\"name\": \"quizzes\", \"percentage\": 0.2, \"mandatory\": false, \"type\": null}, {\"name\": \"project\", \"percentage\": 0.8, \"mandatory\": true, \"type\": \"PROJECT\"}]}"
     println(result)
-    val teste = 12
+    val lista = listOf(1,2,3)
+    val teste = mapOf("teste" to 12, "ola" to "adeus", "lista" to lista)
     println(toJsonElement(teste))
 }
 
