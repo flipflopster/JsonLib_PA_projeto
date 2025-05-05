@@ -244,7 +244,7 @@ object JsonNull : JsonElement {
     override fun toString(): String = "null"
 }
 
-    fun toJsonElement(element: Any): JsonElement{
+    fun toJsonElement(element: Any?): JsonElement{
         return when(element) {
             is Int -> JsonNumber(element as Number)
             is Double -> JsonNumber(element as Number)
@@ -254,16 +254,20 @@ object JsonNull : JsonElement {
             is Enum<*> -> JsonString(element.name)
             null -> JsonNull
             is Map<*,*> -> toJsonElementMap(element)
-        }
-        else
-            TODO()
 
+            else -> TODO() //JsonObject
+        }
     }
 
     fun toJsonElementList(lista: List<*>): JsonElement{
-        TODO()
+        var listJsonElement = JsonArray()
+        lista.forEach{
+            listJsonElement.add(toJsonElement(it))
+        }
+        return listJsonElement
     }
 
     fun toJsonElementMap(mapa: Map<*,*>): JsonElement{
+        //JsonObject
         TODO()
     }
