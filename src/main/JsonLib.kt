@@ -1,5 +1,12 @@
 package main
 
+import kotlin.reflect.KClass
+import kotlin.reflect.KParameter
+import kotlin.reflect.KProperty
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.memberProperties
+import kotlin.reflect.full.primaryConstructor
+
 interface JsonElement{
 
 
@@ -255,8 +262,21 @@ object JsonNull : JsonElement {
             null -> JsonNull
             is Map<*,*> -> toJsonElementMap(element)
 
-            else -> TODO() //JsonObject
+            else -> {
+                val clazz = element::class
+                val aux = mutableListOf<JsonObjectTupple>()
+                clazz.primaryConstructor?.parameters?.forEach {
+                    val prop = clazz.matchProperty(it)
+                    aux.add(JsonObjectTupple(JsonString(prop.name), toJsonElement(prop.call(element))))
+                }
+                JsonObject(aux)
+            }
         }
+    }
+
+    fun KClass<*>.matchProperty(parameter: KParameter) : KProperty<*> {
+        require(isData)
+        return declaredMemberProperties.first { it.name == parameter.name }
     }
 
     fun toJsonElementList(lista: List<*>): JsonElement{
