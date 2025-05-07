@@ -120,8 +120,8 @@ class Tests {
     @Test
     fun testInferJsonObjectFromDataClass() {
         val result: String =  "{\"name\": \"PA\", \"credits\": 6, \"evaluation\": [{\"name\": \"quizzes\", \"percentage\": 0.2, \"mandatory\": false, \"type\": null}, {\"name\": \"project\", \"percentage\": 0.8, \"mandatory\": true, \"type\": \"PROJECT\"}]}"
-        //val jsonObj = JsonObject.inferFromDataClass(course)
-        assertEquals(result, result)
+        val jsonObj = toJsonElement(course)
+        assertEquals(result, jsonObj.toString())
     }
 
 
