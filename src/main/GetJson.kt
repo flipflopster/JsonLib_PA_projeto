@@ -102,9 +102,8 @@ class GetJson(vararg controllers: KClass<*>) {
 
             val requestURI: URI = exchange.requestURI
             val path: String = requestURI.path
-            println(path)
-            println(requestURI)
-            mapUrlToFunction(path)
+
+            val result = mapUrlToFunctionResult(path)
 
 
             if (exchange.requestMethod == "GET") {
@@ -127,12 +126,20 @@ class GetJson(vararg controllers: KClass<*>) {
         println("Server started on port $port")
     }
 
-    fun mapUrlToFunction(path: String){
+    fun mapUrlToFunctionResult(path: String){
 
-        val pathSeparated = path.split("/")
-        print(pathSeparated)
+        val pathSeparated = path.replace("^/+".toRegex(), "").split("/")
 
-        val con = controllers.filter{ it.findAnnotation<Mapping>()?.value == pathSeparated[0] }
+
+        val con: List<KClass<*>> = mutableListOf<KClass<*>>()
+
+        con.addAll(controllers.filter{ it.findAnnotation<Mapping>()?.value == pathSeparated[0] })
+
+        val func: List<KFunction<*>> = mutableListOf<KFunction<*>>()
+        
+        if(pathSeparated.size > 1)
+                con.forEach { func.addAll(it.declaredMemberFunctions.filter{ it.findAnnotation<Mapping>()?.value == pathSeparated[1] }) }
+
 
     }
 

@@ -5,5 +5,5 @@ import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 
 fun main() {
-    print("/".split("/"))
+    print("".replace("^/+".toRegex(), "").split("/"))
 }
