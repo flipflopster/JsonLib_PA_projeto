@@ -131,15 +131,15 @@ class GetJson(vararg controllers: KClass<*>) {
         val pathSeparated = path.replace("^/+".toRegex(), "").split("/")
 
 
-        val con: List<KClass<*>> = mutableListOf<KClass<*>>()
+        val con = mutableListOf<KClass<*>>()
 
-        con.addAll(controllers.filter{ it.findAnnotation<Mapping>()?.value == pathSeparated[0] })
+        controllers.filter{ it.findAnnotation<Mapping>()?.value == pathSeparated[0] }.forEach{ con.add(it) }
 
-        val func: List<KFunction<*>> = mutableListOf<KFunction<*>>()
-        
+        val func = mutableListOf<KFunction<*>>()
+
         if(pathSeparated.size > 1)
-                con.forEach { func.addAll(it.declaredMemberFunctions.filter{ it.findAnnotation<Mapping>()?.value == pathSeparated[1] }) }
-
+                con.forEach { it.declaredMemberFunctions.filter{ it.findAnnotation<Mapping>()?.value == pathSeparated[1] }.forEach{ func.add(it) } }
+                println(func)
 
     }
 
