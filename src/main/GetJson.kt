@@ -139,8 +139,10 @@ class GetJson(vararg controllers: KClass<*>) {
 
         if(pathSeparated.size > 1)
                 con.forEach { it.declaredMemberFunctions.filter{ it.findAnnotation<Mapping>()?.value == pathSeparated[1] }.forEach{ func.add(it) } }
-                println(func)
 
+        println("func")
+        println(func.first())
+        
     }
 
 }
