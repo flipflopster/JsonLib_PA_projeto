@@ -79,21 +79,14 @@ class Controller {
 
         val courseJson = toJsonElement(course).toString()
 
-
-
     }
     
 }
 
-
-
-
-
-
-
 class GetJson(vararg controllers: KClass<*>) {
 
-    private val controllers: List<KClass<*>> = controllers.toList()
+    private val ctrObjs: List<Any> = controllers.map { it.createInstance() }
+
 
     private inner class TestHttp: HttpHandler {
 
@@ -128,20 +121,26 @@ class GetJson(vararg controllers: KClass<*>) {
 
     fun mapUrlToFunctionResult(path: String){
 
+        println(path)
+
         val pathSeparated = path.replace("^/+".toRegex(), "").split("/")
 
+        val con = mutableListOf<Any>()
 
-        val con = mutableListOf<KClass<*>>()
-
-        controllers.filter{ it.findAnnotation<Mapping>()?.value == pathSeparated[0] }.forEach{ con.add(it) }
+        ctrObjs.filter{ it::class.findAnnotation<Mapping>()?.value == pathSeparated[0] }.forEach{ con.add(it) }
 
         val func = mutableListOf<KFunction<*>>()
 
         if(pathSeparated.size > 1)
-                con.forEach { it.declaredMemberFunctions.filter{ it.findAnnotation<Mapping>()?.value == pathSeparated[1] }.forEach{ func.add(it) } }
+                con.forEach { it::class.declaredMemberFunctions.filter{ it.findAnnotation<Mapping>()?.value == pathSeparated[1] }.forEach{ func.add(it) } }
 
-        println("func")
-        println(func.first())
+
+        println(func[0].call(con[0])) // dar como argumento o objeto controller porque naa pode ser static
+        println(func[0])
+
+        //when(func[0].call(con[0]))
+
+
         
     }
 
