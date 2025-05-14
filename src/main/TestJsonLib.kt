@@ -1,6 +1,8 @@
 package main
 
 import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertTrue
+import okhttp3.*
 import org.junit.Test
 
 class Tests {
@@ -124,6 +126,71 @@ class Tests {
         assertEquals(result, jsonObj.toString())
     }
 
+    private val client = OkHttpClient()
 
+    @Test
+    fun testApiInts() {
+        val request = Request.Builder()
+            .url("http://localhost:8000/api/ints")
+            .build()
+
+        client.newCall(request).execute().use { response ->
+            val body = response.body?.string() ?: ""
+            println(body)
+            assertEquals("[1, 2, 3]",body)
+        }
+    }
+
+    @Test
+    fun testApiPair() {
+        val request = Request.Builder()
+            .url("http://localhost:8000/api/pair")
+            .build()
+
+        client.newCall(request).execute().use { response ->
+            val body = response.body?.string() ?: ""
+            println(body)
+            assertEquals("{\"first\": \"um\", \"second\": \"dois\"}",body)
+        }
+    }
+
+    @Test
+    fun testApiPath() {
+        val request = Request.Builder()
+            .url("http://localhost:8000/api/path/a")
+            .build()
+
+        client.newCall(request).execute().use { response ->
+            val body = response.body?.string() ?: ""
+            println(body)
+            assertEquals("\"a\"!",body)
+        }
+    }
+
+    @Test
+    fun testApiArgs() {
+        val request = Request.Builder()
+            .url("http://localhost:8000/api/args?n=3&text=PA")
+            .build()
+
+        client.newCall(request).execute().use { response ->
+            val body = response.body?.string() ?: ""
+            println(body)
+            assertEquals("{\"PA\": \"PAPAPA\"}",body)
+        }
+    }
+
+    @Test
+    fun testApiGetJson() {
+        val request = Request.Builder()
+            .url("http://localhost:8000/api/getJson")
+            .build()
+
+        client.newCall(request).execute().use { response ->
+            val body = response.body?.string() ?: ""
+            println(body)
+            assertEquals("{\"name\": \"PA\", \"credits\": 6, \"evaluation\": [{\"name\": \"quizzes\", \"percentage\": 0.2, \"mandatory\": false, \"type\": null}, {\"name\": \"project\", \"percentage\": 0.8, \"mandatory\": true, \"type\": \"PROJECT\"}]}",body)
+        }
+    }
 
 }
