@@ -1,16 +1,8 @@
 package main
 
 import com.sun.net.httpserver.HttpServer
-import junit.framework.TestCase.assertEquals
-import main.Tests.Course
-import main.Tests.EvalItem
-import main.Tests.EvalType
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import org.junit.Test
 import java.net.InetSocketAddress
 import java.net.URI
-import java.util.concurrent.Executors
 import kotlin.reflect.*
 import kotlin.reflect.full.*
 import com.sun.net.httpserver.HttpHandler
@@ -29,6 +21,7 @@ fun main() {
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 annotation class Mapping(val value: String)
 
+
 @Target(AnnotationTarget.VALUE_PARAMETER)
 annotation class Param
 
@@ -41,17 +34,38 @@ annotation class Path
 @Mapping("api")
 class Controller {
 
+    /**
+     * Endpoint que devolve uma lista estática de inteiros.
+     *
+     */
     @Mapping("ints")
     fun demo(): List<Int> = listOf(1, 2, 3)
 
+    /**
+     * Endpoint que devolve um par de strings.
+     *
+     *
+     */
     @Mapping("pair")
     fun pair(): Pair<String, String> = Pair("um", "dois")
 
+    /**
+     * Endpoint que devolve o valor recebido na URL com um ponto de exclamação.
+     *
+     * @param pathvar String a ser adicionada o !
+     */
     @Mapping("path/{pathvar}")
     fun path(
         @Path pathvar: String
     ): String = pathvar + "!"
 
+    /**
+     * Endpoint que recebe dois parâmetros: um número `n` e um texto `text`.
+     * Repete o texto `n` vezes e devolve um mapa onde a chave e o valor são o texto repetido.
+     *
+     * @param n número inteiro de quantas vezes a ser repetido
+     * @param text String a ser repetida
+     */
     @Mapping("args")
     fun args(
         @Param n: Int,
@@ -80,7 +94,7 @@ class GetJson(vararg controllers: KClass<*>) {
 
             if (exchange.requestMethod == "GET") {
                 //print("Received a GET request")
-                val response = "This is the response to a GET request"
+                val response = resultJson
                 exchange.sendResponseHeaders(200, response.length.toLong())
                 val os: OutputStream = exchange.responseBody
                 os.write(response.toByteArray())
@@ -98,7 +112,7 @@ class GetJson(vararg controllers: KClass<*>) {
         println("Server started on port $port")
     }
 
-    fun mapUrlToFunctionResult(path: String) {
+    fun mapUrlToFunctionResult(path: String): Any? {
 
 
         val pathSeparated = path.replace("^/+".toRegex(), "").split("/")
@@ -132,11 +146,11 @@ class GetJson(vararg controllers: KClass<*>) {
             "path" -> {
                 val params = func[0].parameters.map { it.findAnnotation<Path>() }
                 println(func[0].call(con[0], pathSeparated[2]))
+                return func[0].call(con[0], pathSeparated[2])
             }
 
             "args" -> {
                 val params = func[0].parameters.map { it.findAnnotation<Param>() }
-
             }
 
             else -> {
@@ -145,6 +159,7 @@ class GetJson(vararg controllers: KClass<*>) {
 
 
         }
+        return func[0].call(con[0])
     }
 
 }
