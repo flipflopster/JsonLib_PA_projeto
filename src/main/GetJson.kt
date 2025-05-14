@@ -45,7 +45,7 @@ class Controller {
     fun demo(): List<Int> = listOf(1, 2, 3)
 
     @Mapping("pair")
-    fun obj(): Pair<String, String> = Pair("um", "dois")
+    fun pair(): Pair<String, String> = Pair("um", "dois")
 
     @Mapping("path/{pathvar}")
     fun path(
@@ -58,28 +58,6 @@ class Controller {
         @Param text: String
     ): Map<String, String> = mapOf(text to text.repeat(n))
 
-    @Mapping("kotlinToJson")
-    fun kotlinToJson(
-        @Param obj: Any
-    ): JsonElement {
-        return toJsonElement(obj)
-    }
-
-
-    @Mapping("getJson")
-    fun getTestObject() {
-
-        val course = Course(
-            "PA", 6, listOf(
-                EvalItem("quizzes", .2, false, null),
-                EvalItem("project", .8, true,
-                    EvalType.PROJECT)
-            )
-        )
-
-        val courseJson = toJsonElement(course).toString()
-
-    }
     
 }
 
@@ -97,6 +75,7 @@ class GetJson(vararg controllers: KClass<*>) {
             val path: String = requestURI.path
 
             val result = mapUrlToFunctionResult(path)
+            val resultJson = toJsonElement(result).toString()
 
 
             if (exchange.requestMethod == "GET") {
@@ -119,29 +98,53 @@ class GetJson(vararg controllers: KClass<*>) {
         println("Server started on port $port")
     }
 
-    fun mapUrlToFunctionResult(path: String){
+    fun mapUrlToFunctionResult(path: String) {
 
-        println(path)
 
         val pathSeparated = path.replace("^/+".toRegex(), "").split("/")
 
+
+
+        println(pathSeparated)
+
         val con = mutableListOf<Any>()
 
-        ctrObjs.filter{ it::class.findAnnotation<Mapping>()?.value == pathSeparated[0] }.forEach{ con.add(it) }
+        ctrObjs.filter { it::class.findAnnotation<Mapping>()?.value == pathSeparated[0] }.forEach { con.add(it) }
 
         val func = mutableListOf<KFunction<*>>()
 
-        if(pathSeparated.size > 1)
-                con.forEach { it::class.declaredMemberFunctions.filter{ it.findAnnotation<Mapping>()?.value == pathSeparated[1] }.forEach{ func.add(it) } }
+        if (pathSeparated.size > 1)
+            con.forEach {
+                it::class.declaredMemberFunctions.filter {
+                    it.findAnnotation<Mapping>()?.value?.replace(
+                        "^/+".toRegex(),
+                        ""
+                    )?.split("/")?.first() == pathSeparated[1]
+                }.forEach { func.add(it) }
+            }
 
 
-        println(func[0].call(con[0])) // dar como argumento o objeto controller porque naa pode ser static
+        //println(func[0].call(con[0])) // dar como argumento o objeto controller porque naa pode ser static
         println(func[0])
 
-        //when(func[0].call(con[0]))
+
+        when (pathSeparated[1]) {
+            "path" -> {
+                val params = func[0].parameters.map { it.findAnnotation<Path>() }
+                println(func[0].call(con[0], pathSeparated[2]))
+            }
+
+            "args" -> {
+                val params = func[0].parameters.map { it.findAnnotation<Param>() }
+
+            }
+
+            else -> {
+
+            }
 
 
-        
+        }
     }
 
 }

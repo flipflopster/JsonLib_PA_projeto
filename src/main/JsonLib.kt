@@ -343,6 +343,7 @@ object JsonNull : JsonElement {
      */
     fun toJsonElement(element: Any?): JsonElement{
         return when(element) {
+
             is Int -> JsonNumber(element as Number)
             is Double -> JsonNumber(element as Number)
             is Boolean -> if (element) JsonBoolean.TRUE else JsonBoolean.FALSE
