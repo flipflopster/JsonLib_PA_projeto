@@ -116,7 +116,7 @@ class GetJson(vararg controllers: KClass<*>) {
         println("Server started on port $port")
     }
 
-    fun mapUrlToFunctionResult(uri: URI): Any? {
+    private fun mapUrlToFunctionResult(uri: URI): Any? {
 
 
         val pathSeparated = uri.path.replace("^/+".toRegex(), "").split("/")

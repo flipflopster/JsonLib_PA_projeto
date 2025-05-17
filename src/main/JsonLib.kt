@@ -78,15 +78,15 @@ interface JsonElement{
 
 }
 
-    /**
-     * Tupple de um JsonString como chave e um JsonElement como o seu valor.
-     *
-     * @param key chave em JsonString do par
-     * @param value da chave como JsonElement
-     * @property key nome da variavel em json
-     * @property value valor da variavel em json
-     * @constructor cria um tuplo de json.
-     */
+/**
+ * Tupple de um JsonString como chave e um JsonElement como o seu valor.
+ *
+ * @param key chave em JsonString do par
+ * @param value da chave como JsonElement
+ * @property key nome da variavel em json
+ * @property value valor da variavel em json
+ * @constructor cria um tuplo de json.
+ */
 data class JsonObjectTupple(val key: JsonString, val value: JsonElement) : JsonElement {
 
     override fun toString(): String {
@@ -94,17 +94,19 @@ data class JsonObjectTupple(val key: JsonString, val value: JsonElement) : JsonE
     }
 }
 
-    /**
-     * Objeto de um json.
-     *
-     * @param list lista de JsonObjectTupple
-     * @property list lista de valores json do objeto
-     * @constructor cria um objeto json.
-     */
+/**
+ * Objeto de um json.
+ *
+ * @param list lista de JsonObjectTupple
+ * @property list lista de valores json do objeto
+ * @constructor cria um objeto json.
+ */
 data class JsonObject (val list: MutableList<JsonObjectTupple> = mutableListOf<JsonObjectTupple>()) : JsonElement {
 
 
     val getList get() = list.toList()
+
+
 
     fun serializeToString(): String {
         return toString()
@@ -118,9 +120,17 @@ data class JsonObject (val list: MutableList<JsonObjectTupple> = mutableListOf<J
         return result.dropLast(2) + "}"
     }
 
-    init {
+    /**
+     * Adiciona um novo tupulo ao JsonObject.
+     *
+     * @param elemento a ser adicionado
+     */
+    fun add(element: JsonObjectTupple) {
+        //TODO check se são todos do mesmo tipo
+        list.add(element)
 
     }
+
 
     /**
      * Filtro que devolve um novo JsonObject com base no predicate dado nu outro JsonObject.
@@ -174,13 +184,13 @@ data class JsonObject (val list: MutableList<JsonObjectTupple> = mutableListOf<J
 
 }
 
-    /**
-     * Array de um json.
-     *
-     * @param list lista de JsonElement
-     * @property list lista de valores json do array
-     * @constructor cria um array json.
-     */
+/**
+ * Array de um json.
+ *
+ * @param list lista de JsonElement
+ * @property list lista de valores json do array
+ * @constructor cria um array json.
+ */
 data class JsonArray (val list: MutableList<JsonElement> = mutableListOf<JsonElement>()) : JsonElement {
 
     init {
@@ -272,13 +282,13 @@ data class JsonArray (val list: MutableList<JsonElement> = mutableListOf<JsonEle
 
 }
 
-    /**
-     * Número de um json.
-     *
-     * @param integer Number que queremos transformar em json
-     * @property integer um numero em json.
-     * @constructor cria um número json.
-     */
+/**
+ * Número de um json.
+ *
+ * @param integer Number que queremos transformar em json
+ * @property integer um numero em json.
+ * @constructor cria um número json.
+ */
 data class JsonNumber (private val integer: Number = 0) : JsonElement {
 
 
@@ -290,13 +300,13 @@ data class JsonNumber (private val integer: Number = 0) : JsonElement {
 
 }
 
-    /**
-     * String de um json.
-     *
-     * @param string String que queremos transformar em json
-     * @property string String em json
-     * @constructor cria uma string json.
-     */
+/**
+ * String de um json.
+ *
+ * @param string String que queremos transformar em json
+ * @property string String em json
+ * @constructor cria uma string json.
+ */
 data class JsonString(private val string: String) : JsonElement {
 
     val value: String get() = string
@@ -305,11 +315,11 @@ data class JsonString(private val string: String) : JsonElement {
 
 }
 
-    /**
-     * Enum de um boolean json
-     *
-     * @constructor cria um boolean json.
-     */
+/**
+ * Enum de um boolean json
+ *
+ * @constructor cria um boolean json.
+ */
 enum class JsonBoolean : JsonElement {
     TRUE, FALSE;
 
@@ -325,65 +335,65 @@ enum class JsonBoolean : JsonElement {
 
 }
 
-    /**
-     * Objeto null json
-     *
-     * @constructor cria um null json.
-     */
+/**
+ * Objeto null json
+ *
+ * @constructor cria um null json.
+ */
 object JsonNull : JsonElement {
     override fun toString(): String = "null"
 }
 
-    /**
-     * Json que provém de classes kotlin.
-     *
-     * @param element qualquer objeto de uma classe do kotlin
-     * @property element  objeto que queremos transformar para json
-     * @return element ja transformado em json.
-     */
-    fun toJsonElement(element: Any?): JsonElement{
-        return when(element) {
+/**
+ * Json que provém de classes kotlin.
+ *
+ * @param element qualquer objeto de uma classe do kotlin
+ * @property element  objeto que queremos transformar para json
+ * @return element ja transformado em json.
+ */
+fun toJsonElement(element: Any?): JsonElement{
+    return when(element) {
 
-            is Int -> JsonNumber(element as Number)
-            is Double -> JsonNumber(element as Number)
-            is Boolean -> if (element) JsonBoolean.TRUE else JsonBoolean.FALSE
-            is String -> JsonString(element)
-            is List<*> -> toJsonElementList(element)
-            is Enum<*> -> JsonString(element.name)
-            null -> JsonNull
-            is Map<*,*> -> toJsonElementMap(element)
+        is Int -> JsonNumber(element as Number)
+        is Double -> JsonNumber(element as Number)
+        is Boolean -> if (element) JsonBoolean.TRUE else JsonBoolean.FALSE
+        is String -> JsonString(element)
+        is List<*> -> toJsonElementList(element)
+        is Enum<*> -> JsonString(element.name)
+        null -> JsonNull
+        is Map<*,*> -> toJsonElementMap(element)
 
-            else -> {
-                val clazz = element::class
-                val aux = mutableListOf<JsonObjectTupple>()
-                clazz.primaryConstructor?.parameters?.forEach {
-                    val prop = clazz.matchProperty(it)
-                    aux.add(JsonObjectTupple(JsonString(prop.name), toJsonElement(prop.call(element))))
-                }
-                JsonObject(aux)
+        else -> {
+            val clazz = element::class
+            val aux = mutableListOf<JsonObjectTupple>()
+            clazz.primaryConstructor?.parameters?.forEach {
+                val prop = clazz.matchProperty(it)
+                aux.add(JsonObjectTupple(JsonString(prop.name), toJsonElement(prop.call(element))))
             }
+            JsonObject(aux)
         }
     }
+}
 
-    private fun KClass<*>.matchProperty(parameter: KParameter) : KProperty<*> {
-        require(isData)
-        return declaredMemberProperties.first { it.name == parameter.name }
-    }
+private fun KClass<*>.matchProperty(parameter: KParameter) : KProperty<*> {
+    require(isData)
+    return declaredMemberProperties.first { it.name == parameter.name }
+}
 
-    private fun toJsonElementList(lista: List<*>): JsonElement{
-        val listJsonElement = JsonArray()
-        lista.forEach{
-            listJsonElement.add(toJsonElement(it))
-        }
-        return listJsonElement
+private fun toJsonElementList(lista: List<*>): JsonElement{
+    val listJsonElement = JsonArray()
+    lista.forEach{
+        listJsonElement.add(toJsonElement(it))
     }
+    return listJsonElement
+}
 
-    private fun toJsonElementMap(mapa: Map<*,*>): JsonElement {
-        val jsonObject = mutableListOf<JsonObjectTupple>()
-        mapa.forEach{ k,v ->
-            if(k is String){
-                jsonObject.add(JsonObjectTupple(JsonString(k), toJsonElement(v)))
-            } else throw IllegalArgumentException("Key has to be String")
-        }
-        return JsonObject(jsonObject)
+private fun toJsonElementMap(mapa: Map<*,*>): JsonElement {
+    val jsonObject = mutableListOf<JsonObjectTupple>()
+    mapa.forEach{ k,v ->
+        if(k is String){
+            jsonObject.add(JsonObjectTupple(JsonString(k), toJsonElement(v)))
+        } else throw IllegalArgumentException("Key has to be String")
     }
+    return JsonObject(jsonObject)
+}
