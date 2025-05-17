@@ -1,7 +1,7 @@
-package main
+package test
 
 import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertTrue
+import main.*
 import okhttp3.*
 import org.junit.Test
 
@@ -18,7 +18,11 @@ class Tests {
 
 
     val exampleObject = JsonObject(
-        mutableListOf(JsonObjectTupple(JsonString("string"), jsonString), JsonObjectTupple(JsonString("number"), jsonNumber), JsonObjectTupple(JsonString("boolean"), jsonBoolean), JsonObjectTupple(JsonString("array"), jsonArray), JsonObjectTupple(JsonString("nestedObject"), nestedJsonObject)))
+        mutableListOf(
+            JsonObjectTupple(JsonString("string"), jsonString), JsonObjectTupple(JsonString("number"), jsonNumber), JsonObjectTupple(
+                JsonString("boolean"), jsonBoolean), JsonObjectTupple(JsonString("array"), jsonArray), JsonObjectTupple(
+                JsonString("nestedObject"), nestedJsonObject)
+        ))
 
     val exampleObject2 = JsonObject(
         mutableListOf(
@@ -115,7 +119,8 @@ class Tests {
         "PA", 6, listOf(
             EvalItem("quizzes", .2, false, null),
             EvalItem("project", .8, true,
-                EvalType.PROJECT)
+                EvalType.PROJECT
+            )
         )
     )
 
