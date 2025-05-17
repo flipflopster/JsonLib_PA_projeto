@@ -83,3 +83,7 @@ Example:
 This example is the test for the example shown earlier in the chapter "Usage".
 
 The example checks if in the url http://localhost:8000/api/ints, the body of the GET request response is [1, 2, 3].
+
+## UML classes graph
+
+![Untitled Diagram drawio](https://github.com/user-attachments/assets/b26cce04-a36a-4f18-9b50-293bd051bedb)
