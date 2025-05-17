@@ -86,9 +86,10 @@ class GetJson(vararg controllers: KClass<*>) {
         override fun handle(exchange: HttpExchange) {
 
             val requestURI: URI = exchange.requestURI
-            val path: String = requestURI.path
 
-            val result = mapUrlToFunctionResult(path)
+            //val path: String = requestURI.path
+
+            val result = mapUrlToFunctionResult(requestURI)
             val resultJson = toJsonElement(result).toString()
 
 
@@ -112,14 +113,14 @@ class GetJson(vararg controllers: KClass<*>) {
         println("Server started on port $port")
     }
 
-    fun mapUrlToFunctionResult(path: String): Any? {
+    fun mapUrlToFunctionResult(uri: URI): Any? {
 
 
-        val pathSeparated = path.replace("^/+".toRegex(), "").split("/")
+        val pathSeparated = uri.path.replace("^/+".toRegex(), "").split("/")
 
 
 
-        println(pathSeparated)
+
 
         val con = mutableListOf<Any>()
 
@@ -139,7 +140,7 @@ class GetJson(vararg controllers: KClass<*>) {
 
 
         //println(func[0].call(con[0])) // dar como argumento o objeto controller porque naa pode ser static
-        println(func[0])
+        //println(func[0])
 
 
         when (pathSeparated[1]) {
@@ -151,15 +152,18 @@ class GetJson(vararg controllers: KClass<*>) {
 
             "args" -> {
                 val params = func[0].parameters.map { it.findAnnotation<Param>() }
+                //println(pathSeparated[1].split("?")[1])
+                val queryParams = uri.query.split("&").map { it.split("=") }
+                return func[0].call(con[0], queryParams[0][1].toInt(), queryParams[1][1])
             }
 
             else -> {
-
+                return func[0].call(con[0])
             }
 
 
         }
-        return func[0].call(con[0])
+        return "Function not found"
     }
 
 }
