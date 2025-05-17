@@ -56,6 +56,30 @@ The example would return the Json converted "listOf(1, 2, 3)" at in the http get
 
 ## Running Tests
 
+To test the HTTP server mentioned earlier, you can just use the tests already given.
+
+These tests use an external library for performing HTTP requests, OkHttp.
+
+Example:
+
 ```bash
 # Command to run tests
+ private val client = OkHttpClient()
+ 
+    @Test
+    fun testApiInts() {
+        val request = Request.Builder()
+            .url("http://localhost:8000/api/ints")
+            .build()
+
+        client.newCall(request).execute().use { response ->
+            val body = response.body?.string() ?: ""
+            println(body)
+            assertEquals("[1, 2, 3]",body)
+        }
+    }
 ```
+
+This example is the test for the example shown earlier in the chapter "Usage".
+
+The example checks if in the url http://localhost:8000/api/ints, the body of the GET request response is [1, 2, 3].
