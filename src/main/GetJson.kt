@@ -37,6 +37,7 @@ class Controller {
     /**
      * Endpoint que devolve uma lista estática de inteiros.
      *
+     * @return lista de inteiros (1, 2, 3)
      */
     @Mapping("ints")
     fun demo(): List<Int> = listOf(1, 2, 3)
@@ -44,7 +45,7 @@ class Controller {
     /**
      * Endpoint que devolve um par de strings.
      *
-     *
+     * @return pair de strings ("um", "dois")
      */
     @Mapping("pair")
     fun pair(): Pair<String, String> = Pair("um", "dois")
@@ -53,6 +54,7 @@ class Controller {
      * Endpoint que devolve o valor recebido na URL com um ponto de exclamação.
      *
      * @param pathvar String a ser adicionada o !
+     * @return string pathvar + !
      */
     @Mapping("path/{pathvar}")
     fun path(
@@ -65,6 +67,7 @@ class Controller {
      *
      * @param n número inteiro de quantas vezes a ser repetido
      * @param text String a ser repetida
+     * @return map {text: text repetido n vezes}
      */
     @Mapping("args")
     fun args(
