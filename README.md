@@ -86,4 +86,4 @@ The example checks if in the url http://localhost:8000/api/ints, the body of the
 
 ## UML classes graph
 
-![Untitled Diagram drawio](https://github.com/user-attachments/assets/ed43cd04-d92a-4b0a-b8a8-eda3305d6509)
+![Untitled Diagram drawio](https://github.com/user-attachments/assets/31c4d528-28d4-4d5a-8dc7-d742fa7ea9a3)
